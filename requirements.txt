@@ -4,7 +4,9 @@ nltk==3.9.1
 gradio==5.21.0
 gradio_client==1.7.2
 git+https://github.com/huggingface/peft.git
-bitsandbytes==0.42.0
+git+https://github.com/bitsandbytes-foundation/bitsandbytes
 pyvis==0.3.2
 evaluate==0.4.3
 python-dotenv==1.0.1
+numpy==1.26.4
+trl==0.15.2
