@@ -6,3 +6,5 @@ gradio_client==1.7.2
 git+https://github.com/huggingface/peft.git
 bitsandbytes==0.42.0
 pyvis==0.3.2
+evaluate==0.4.3
+python-dotenv==1.0.1

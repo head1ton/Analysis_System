@@ -1,7 +1,11 @@
 import gradio as gr
+import os
 
 from character_network import NamedEntityRecognizer, CharacterNetworkGenerator
+from text_classification import JutsuClassifier
 from theme_classifier import ThemeClassifier
+from dotenv import load_dotenv
+load_dotenv()
 
 # friendship,hope,sacrifice,battle,self development,betrayal,love,dialogue
 # /Users/hwan/Documents/ml/Analysis_System/data/Subtitles
@@ -41,6 +45,16 @@ def get_character_network(subtitles_path,ner_path):
 
     return html
 
+def classify_text(text_classification_model, text_classification_data_path, text_to_classify):
+    jutsu_classifier = JutsuClassifier(model_path=text_classification_model,
+                                       data_path=text_classification_data_path,
+                                       huggingface_token=os.getenv('huggingface_token'))
+
+    output = jutsu_classifier.classify_jutsu(text_to_classify)
+    output = output[0]
+
+    return output
+
 def main():
     with gr.Blocks() as iface:
         # Theme Classification Section
@@ -69,6 +83,20 @@ def main():
                         ner_path = gr.Textbox(label="NERs save path")
                         get_network_graph_button = gr.Button("Get Character Network")
                         get_network_graph_button.click(get_character_network, inputs=[subtitles_path, ner_path], outputs=[network_html])
+
+        # Text Classification with LLMs
+        with gr.Row():
+            with gr.Column():
+                gr.HTML("<h1>Text Classification with LLMs</h1>")
+                with gr.Row():
+                    with gr.Column():
+                        text_classification_output = gr.Textbox(label="Text Classification Output")
+                    with gr.Column():
+                        text_classification_model = gr.Textbox(label="Model Path")
+                        text_classification_data_path = gr.Textbox(label="Data Path")
+                        text_to_classify = gr.Textbox(label="Text input")
+                        classify_text_button = gr.Button("Classify Text (Jutsu)")
+                        classify_text_button.click(classify_text, inputs=[text_classification_model, text_classification_data_path, text_to_classify], outputs=[text_classification_output])
 
     iface.launch(share=True)
 
