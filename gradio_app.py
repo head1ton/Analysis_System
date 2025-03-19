@@ -1,6 +1,7 @@
 import gradio as gr
 import os
 
+from character_chatbot import CharacterChatBot
 from character_network import NamedEntityRecognizer, CharacterNetworkGenerator
 from text_classification import JutsuClassifier
 from theme_classifier import ThemeClassifier
@@ -55,6 +56,14 @@ def classify_text(text_classification_model, text_classification_data_path, text
 
     return output
 
+def chat_with_character_chatbot(message, history):
+    character_chatbot = CharacterChatBot("AbdullahTarek/Naruto_Llama-3-8B",
+                                         huggingface_token=os.getenv("huggingface_token"))
+
+    output = character_chatbot.chat(message, history)
+    output = output['content'].strip()
+    return output
+
 def main():
     with gr.Blocks() as iface:
         # Theme Classification Section
@@ -97,6 +106,12 @@ def main():
                         text_to_classify = gr.Textbox(label="Text input")
                         classify_text_button = gr.Button("Classify Text (Jutsu)")
                         classify_text_button.click(classify_text, inputs=[text_classification_model, text_classification_data_path, text_to_classify], outputs=[text_classification_output])
+
+        # Character Chatbot Section
+        with gr.Row():
+            with gr.Column():
+                gr.HTML("<h1>Character Chatbot</h1>")
+                gr.ChatInterface(chat_with_character_chatbot)
 
     iface.launch(share=True)
 
